@@ -30,6 +30,15 @@ $(document).ready(function() {
     $.ajax({
       type: "GET",
       url: flickrApiUrl + $.param(flickrApiParams),
-      success: flickrSuccessHandler
+      success: flickrGetPhoto()
     });
   }
+  
+  function flickrGetPhoto(picture) {
+    var Photos = picture.photos.photo;
+    for(var i = 0; i < Photos.length; i++) {
+      var newPic = buildThumbnail(lPhotos[i]);
+      $("#gallery").append(newPic);
+    }
+  }
+});
