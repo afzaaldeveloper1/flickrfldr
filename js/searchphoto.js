@@ -1,29 +1,35 @@
-$(document).ready() {
-    var main = "http://api.flickr.com/services/rest/?";
-    var meth = &method=flickr.places.find;
-    var apikey = "12afca62d7467986169c32929d89ba2b";
-    var uid = jujujaja1;
-    var fullUrl = main+meth+"&api_key=["+apikey+"]&user_id=	 ["+uid+"]&format=json&per_page=500";
-  
-    $.ajax ({
-    	type: "GET",
-    	url: fullUrl,
-    	success: function(data) {
-    		$.each(data, function(i, data) {
-        	$(".gallery").append('<div>');//dont know what to put here
-        });
-    	};
-    });
-    
+$(document).ready(function() {
 	$('.btn').on('click', function(e) {
-        e.preventDefault();
-	    $.ajax ({
-            type: "POST",
-    	    url: fullUrl,
-            data: $("#address").val(),
-            success: function(data) {
-      	    $("#gallery").append('<div>');//dont know what to put here
-            }
-        });
+    e.preventDefault();
+    
+    var address = $("#address").val();
+    var urlgog= "https://maps.googleapis.com/maps/api/geocode/json?address=";
+    urlgog += "key=AIzaSyB2GSm2xmpapNi7O6xAE2mMpb1PSWNiNFA";
+    urlgog += "&address=" + address;
+   
+		$.ajax ({
+    	type: "GET",
+    	url: urlgog,
+      success: getInfoGoog();
     });
-}
+   }); 
+	
+  function getInfoGoog(response) {
+
+    var geoLocation = response.results[0].geometry.location;
+    var flickrApiUrl = "https://api.flickr.com/services/rest/?";
+    var flickrApiParams = {
+      api_key: "5d0b99b598780adb1ce7f682110a03e6",
+      method: "flickr.photos.search",
+      format: "json",
+      nojsoncallback: 1,
+      lat: geoLocation.lat,
+      lon: geoLocation.lng
+    }
+    
+    $.ajax({
+      type: "GET",
+      url: flickrApiUrl + $.param(flickrApiParams),
+      success: flickrSuccessHandler
+    });
+  }
